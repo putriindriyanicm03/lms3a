@@ -252,7 +252,7 @@
     // ===================================================================================
     // PENTING: Ganti URL di bawah ini dengan URL Web App dari Google Apps Script Anda.
     // ===================================================================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKKFTiGJu9Q93VsQddSmkH0P3PCPfkZb-cR97VrwSvwwR2ClRG21DZppTEyyNJ0mZ7/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQ5_WD-eQpI5431tb0REszERbZRYFQfNjlqNbLRnro5RBvti7bhbXMEbVyetMehnJR/exec';
     // ===================================================================================
 
     const sidebar = document.getElementById('sidebar');
@@ -464,6 +464,12 @@
         const form = document.getElementById(formId);
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxQ5_WD-eQpI5431tb0REszERbZRYFQfNjlqNbLRnro5RBvti7bhbXMEbVyetMehnJR/exec') {
+                alert('Gagal mengirim: Harap ganti URL placeholder di file HTML terlebih dahulu.');
+                return;
+            }
+
             showLoader();
 
             const fileInput = form.querySelector('input[type="file"]');
@@ -493,6 +499,10 @@
                         headers: { 'Content-Type': 'application/json' }
                     });
                     
+                    if (!response.ok) {
+                       throw new Error(`Server merespon dengan status: ${response.status}`);
+                    }
+                    
                     const result = await response.json();
 
                     if (result.status === 'success') {
@@ -504,18 +514,24 @@
                             switchView('rekap-tugas');
                         }
                     } else {
-                        throw new Error(result.message || 'Terjadi kesalahan.');
+                        throw new Error(result.message || 'Terjadi kesalahan dari server.');
                     }
                 } catch (error) {
                     console.error('Error submitting form:', error);
-                    alert('Gagal mengirim data: ' + error.message);
+                    let friendlyMessage = 'Gagal mengirim data. Kesalahan umum adalah:\n\n';
+                    friendlyMessage += '1. URL Web App di file HTML belum diganti atau salah.\n';
+                    friendlyMessage += '2. Web App belum di-deploy ulang setelah ada perubahan kode di Apps Script.\n';
+                    friendlyMessage += '3. Izin akses Web App tidak disetel ke "Anyone".\n\n';
+                    friendlyMessage += 'Pastikan Anda sudah mengikuti langkah-langkah deployment dengan benar.\n\n';
+                    friendlyMessage += 'Detail Error Teknis: ' + error.message;
+                    alert(friendlyMessage);
                 } finally {
                     hideLoader();
                 }
             };
             reader.onerror = (error) => {
                 console.error('Error reading file:', error);
-                alert('Gagal membaca file.');
+                alert('Gagal membaca file yang akan diupload.');
                 hideLoader();
             }
         });
@@ -547,6 +563,10 @@
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
+        if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxQ5_WD-eQpI5431tb0REszERbZRYFQfNjlqNbLRnro5RBvti7bhbXMEbVyetMehnJR/exec') {
+            alert('PENTING: Anda harus mengganti "URL_WEB_APP_ANDA_DISINI" di dalam file HTML dengan URL Web App dari Google Apps Script Anda agar aplikasi ini berfungsi.');
+        }
+        
         // Set default date for forms
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('absen-tanggal').value = today;
