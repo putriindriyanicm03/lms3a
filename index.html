@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PJJ Kelas 3A SDN Cipinang Melayu 03 Pagi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-link.active {
+            background-color: #1D4ED8; /* bg-blue-700 */
+            color: white;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="loader-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-white w-64 h-full fixed top-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg">
+        <div class="p-6 bg-blue-600 text-white text-center">
+            <h2 class="text-2xl font-bold">LMS Kelas 3-A</h2>
+        </div>
+        <nav class="mt-4">
+            <button data-target="informasi" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Informasi</button>
+            <button data-target="absen" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Absen PJJ</button>
+            <button data-target="materi" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Materi</button>
+            <button data-target="tugas" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Kirim Tugas</button>
+            <button data-target="rekap-absen" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Rekap Absen</button>
+            <button data-target="rekap-tugas" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Rekap Tugas</button>
+            <button data-target="kontak" class="sidebar-link w-full text-left font-semibold py-3 px-6 hover:bg-gray-200 transition-colors duration-200">Kontak</button>
+        </nav>
+    </aside>
+
+    <div class="md:ml-64 transition-all duration-300 ease-in-out">
+        <header class="bg-white p-4 shadow-md flex items-center justify-between md:justify-end">
+             <!-- Hamburger Menu Button for Mobile -->
+            <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div class="text-center md:text-right">
+                <h1 class="text-xl font-bold text-gray-800">SDN Cipinang Melayu 03 Pagi</h1>
+            </div>
+        </header>
+
+        <main class="p-4 md:p-8">
+            <!-- Informasi Section -->
+            <section id="informasi" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Informasi Penting</h2>
+                    <div id="informasi-container" class="space-y-3">
+                        <!-- Data Informasi akan dimuat di sini -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Absen PJJ Section -->
+            <section id="absen" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">Formulir Absen PJJ</h2>
+                    <form id="form-absen" class="space-y-4">
+                        <div>
+                            <label for="absen-tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
+                            <input type="date" id="absen-tanggal" name="tanggal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="absen-nama" class="block text-sm font-medium text-gray-700">Pilih Nama Siswa</label>
+                            <select id="absen-nama" name="namaSiswa" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="">Memuat nama siswa...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="absen-kehadiran" class="block text-sm font-medium text-gray-700">Kehadiran</label>
+                            <select id="absen-kehadiran" name="kehadiran" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="Hadir">Hadir</option>
+                                <option value="Sakit">Sakit</option>
+                                <option value="Ijin">Ijin</option>
+                                <option value="Alpa">Alpa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="absen-foto" class="block text-sm font-medium text-gray-700">Upload Foto Kehadiran</label>
+                            <input type="file" id="absen-foto" name="foto" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Kirim Absen</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Materi Section -->
+            <section id="materi" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Materi Pembelajaran</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelajaran</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Video</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">LKS</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materi-table" class="bg-white divide-y divide-gray-200">
+                                <!-- Data Materi akan dimuat di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tugas Section -->
+            <section id="tugas" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">Formulir Kirim Tugas PJJ</h2>
+                    <form id="form-tugas" class="space-y-4">
+                        <div>
+                            <label for="tugas-tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
+                            <input type="date" id="tugas-tanggal" name="tanggal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="tugas-nama" class="block text-sm font-medium text-gray-700">Pilih Nama Siswa</label>
+                            <select id="tugas-nama" name="namaSiswa" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="">Memuat nama siswa...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="tugas-pelajaran" class="block text-sm font-medium text-gray-700">Pelajaran</label>
+                            <select id="tugas-pelajaran" name="pelajaran" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option>Pendidikan Pancasila</option>
+                                <option>Bahasa Indonesia</option>
+                                <option>Matematika</option>
+                                <option>IPAS</option>
+                                <option>Seni Rupa</option>
+                                <option>Bahasa Inggris</option>
+                                <option>PLBJ</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="tugas-foto" class="block text-sm font-medium text-gray-700">Upload Foto Tugas</label>
+                            <input type="file" id="tugas-foto" name="foto" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Kirim Tugas</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Rekap Absen Section -->
+            <section id="rekap-absen" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Rekap Absen PJJ</h2>
+                    <div class="flex items-center space-x-4 mb-4">
+                        <input type="date" id="filter-tanggal-absen" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <button id="btn-tampilkan-absen" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Tampilkan</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kehadiran</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekap-absen-table" class="bg-white divide-y divide-gray-200">
+                               <!-- Data Rekap Absen akan dimuat di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rekap Tugas Section -->
+            <section id="rekap-tugas" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Rekap Pengiriman Tugas</h2>
+                    <div class="mb-4">
+                        <input type="text" id="search-tugas" placeholder="Cari nama atau pelajaran..." class="w-full md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelajaran</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekap-tugas-table" class="bg-white divide-y divide-gray-200">
+                               <!-- Data Rekap Tugas akan dimuat di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Kontak Section -->
+            <section id="kontak" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto text-center">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Kontak</h2>
+                    <div class="text-gray-700 space-y-2">
+                        <p class="font-semibold text-lg">Kelas 3-A</p>
+                        <p>SDN Cipinang Melayu 03 Pagi</p>
+                        <p><span class="font-semibold">Wali Kelas :</span> Putri Indriyani, S.Pd.</p>
+                        <a href="http://wa.me/6281285671133" target="_blank" class="inline-block mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg">
+                            Hubungi via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </section>
+        
+            <footer class="text-center p-4 mt-8">
+                <div class="container mx-auto text-gray-600">
+                    <p>&copy; 2025 Putri Indriyani, S.Pd. All rights reserved.</p>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+<script>
+    // ===================================================================================
+    // PENTING: Ganti URL di bawah ini dengan URL Web App dari Google Apps Script Anda.
+    // ===================================================================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPN1mV-NApBdOSrgsb-dT6QUY_U8RKzgOd9d2ddZjOaBzfRTVF6RdkrEaNiLaBDmtN/exec';
+    // ===================================================================================
+
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menu-btn');
+    const navLinks = document.querySelectorAll('.sidebar-link');
+    const contentSections = document.querySelectorAll('.content-section');
+    const loaderOverlay = document.getElementById('loader-overlay');
+
+    let students = [];
+    let allTugas = [];
+
+    // --- UTILITY FUNCTIONS ---
+    const showLoader = () => loaderOverlay.classList.remove('hidden');
+    const hideLoader = () => loaderOverlay.classList.add('hidden');
+    
+    const isMobile = () => window.innerWidth < 768;
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('-translate-x-full');
+    }
+
+    function switchView(targetId) {
+        contentSections.forEach(section => {
+            section.classList.remove('active');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        document.getElementById(targetId).classList.add('active');
+        document.querySelector(`.sidebar-link[data-target="${targetId}"]`).classList.add('active');
+
+        // Close sidebar on mobile after navigation
+        if (isMobile() && !sidebar.classList.contains('-translate-x-full')) {
+            toggleSidebar();
+        }
+
+        // Load data for the new view
+        switch (targetId) {
+            case 'informasi':
+                fetchInformasi();
+                break;
+            case 'materi':
+                fetchMateri();
+                break;
+            case 'rekap-absen':
+                fetchRekapAbsen();
+                break;
+            case 'rekap-tugas':
+                fetchRekapTugas();
+                break;
+        }
+    }
+    
+    // --- DATA FETCHING FUNCTIONS ---
+    async function fetchSiswa() {
+        if (students.length > 0) return; // a_Don't refetch if already loaded
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getSiswa`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            students = await response.json();
+            
+            const absenNamaSelect = document.getElementById('absen-nama');
+            const tugasNamaSelect = document.getElementById('tugas-nama');
+            
+            absenNamaSelect.innerHTML = '<option value="">Pilih Nama</option>';
+            tugasNamaSelect.innerHTML = '<option value="">Pilih Nama</option>';
+
+            students.forEach(student => {
+                absenNamaSelect.innerHTML += `<option value="${student}">${student}</option>`;
+                tugasNamaSelect.innerHTML += `<option value="${student}">${student}</option>`;
+            });
+
+        } catch (error) {
+            console.error('Error fetching students:', error);
+            alert('Gagal memuat daftar siswa. Coba muat ulang halaman.');
+        }
+    }
+    
+    async function fetchInformasi() {
+        showLoader();
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getInformasi`);
+            const data = await response.json();
+            const container = document.getElementById('informasi-container');
+            container.innerHTML = data.map(item => `
+                <div class="border p-4 rounded-lg bg-gray-50">
+                    <p class="font-medium text-gray-800">${item.informasi}</p>
+                    <a href="${item.link}" target="_blank" class="text-blue-600 hover:underline">Lihat Selengkapnya</a>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching informasi:', error);
+            document.getElementById('informasi-container').innerHTML = '<p class="text-red-500">Gagal memuat informasi.</p>';
+        } finally {
+            hideLoader();
+        }
+    }
+
+    async function fetchMateri() {
+        showLoader();
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getMateri`);
+            const data = await response.json();
+            const tableBody = document.getElementById('materi-table');
+            tableBody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.pelajaran}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <a href="${item.video}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">Lihat Video</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <a href="${item.lks}" target="_blank" class="text-green-600 hover:text-green-900 font-medium">Buka LKS</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <button onclick="switchView('tugas')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded">Kerjakan Tugas</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching materi:', error);
+            document.getElementById('materi-table').innerHTML = '<tr><td colspan="5" class="text-center p-4 text-red-500">Gagal memuat materi.</td></tr>';
+        } finally {
+            hideLoader();
+        }
+    }
+    
+    async function fetchRekapAbsen(tanggal = '') {
+        showLoader();
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getAbsen&tanggal=${tanggal}`);
+            const data = await response.json();
+            renderRekapAbsen(data);
+        } catch (error) {
+            console.error('Error fetching rekap absen:', error);
+            document.getElementById('rekap-absen-table').innerHTML = '<tr><td colspan="4" class="text-center p-4 text-red-500">Gagal memuat rekap absen.</td></tr>';
+        } finally {
+            hideLoader();
+        }
+    }
+    
+    function renderRekapAbsen(data) {
+        const tableBody = document.getElementById('rekap-absen-table');
+        if (data.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Tidak ada data untuk ditampilkan.</td></tr>';
+            return;
+        }
+        
+        const statusColors = {
+            'Hadir': 'bg-green-100 text-green-800',
+            'Sakit': 'bg-yellow-100 text-yellow-800',
+            'Ijin': 'bg-gray-100 text-gray-800',
+            'Alpa': 'bg-red-100 text-red-800'
+        };
+
+        tableBody.innerHTML = data.map((item, index) => `
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.tanggal}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.nama}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[item.kehadiran] || ''}">
+                        ${item.kehadiran}
+                    </span>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    async function fetchRekapTugas() {
+        showLoader();
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getTugas`);
+            allTugas = await response.json();
+            renderRekapTugas(allTugas);
+        } catch (error) {
+            console.error('Error fetching rekap tugas:', error);
+            document.getElementById('rekap-tugas-table').innerHTML = '<tr><td colspan="5" class="text-center p-4 text-red-500">Gagal memuat rekap tugas.</td></tr>';
+        } finally {
+            hideLoader();
+        }
+    }
+
+    function renderRekapTugas(data) {
+        const tableBody = document.getElementById('rekap-tugas-table');
+        if (data.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Tidak ada data untuk ditampilkan.</td></tr>';
+            return;
+        }
+        tableBody.innerHTML = data.map((item, index) => `
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.tanggal}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.nama}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.pelajaran}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        Sudah Kirim
+                    </span>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+
+    // --- FORM SUBMISSION ---
+    function handleFormSubmit(formId, action) {
+        const form = document.getElementById(formId);
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoader();
+
+            const fileInput = form.querySelector('input[type="file"]');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Silakan pilih file untuk diupload.');
+                hideLoader();
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64File = reader.result.split(',')[1];
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                data.action = action;
+                data.fileName = file.name;
+                data.mimeType = file.type;
+                data.fileContent = base64File;
+
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        alert(result.message);
+                        form.reset();
+                        if (action === 'submitAbsen') {
+                            switchView('materi');
+                        } else if (action === 'submitTugas') {
+                            switchView('rekap-tugas');
+                        }
+                    } else {
+                        throw new Error(result.message || 'Terjadi kesalahan.');
+                    }
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    alert('Gagal mengirim data: ' + error.message);
+                } finally {
+                    hideLoader();
+                }
+            };
+            reader.onerror = (error) => {
+                console.error('Error reading file:', error);
+                alert('Gagal membaca file.');
+                hideLoader();
+            }
+        });
+    }
+
+    // --- EVENT LISTENERS ---
+    menuBtn.addEventListener('click', toggleSidebar);
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            switchView(e.target.dataset.target);
+        });
+    });
+
+    document.getElementById('btn-tampilkan-absen').addEventListener('click', () => {
+        const tanggal = document.getElementById('filter-tanggal-absen').value;
+        fetchRekapAbsen(tanggal);
+    });
+
+    document.getElementById('search-tugas').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredTugas = allTugas.filter(tugas => 
+            tugas.nama.toLowerCase().includes(searchTerm) || 
+            tugas.pelajaran.toLowerCase().includes(searchTerm)
+        );
+        renderRekapTugas(filteredTugas);
+    });
+
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set default date for forms
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('absen-tanggal').value = today;
+        document.getElementById('tugas-tanggal').value = today;
+        document.getElementById('filter-tanggal-absen').value = today;
+        
+        switchView('informasi');
+        fetchSiswa();
+        handleFormSubmit('form-absen', 'submitAbsen');
+        handleFormSubmit('form-tugas', 'submitTugas');
+    });
+
+</script>
+</body>
+</html>
+
